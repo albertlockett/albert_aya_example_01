@@ -11,7 +11,8 @@ use structopt::StructOpt;
 use simplelog::{ColorChoice, ConfigBuilder, LevelFilter, TermLogger, TerminalMode};
 use aya_log::BpfLogger;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     if let Err(e) = try_main() {
         eprintln!("error: {:#}", e);
     }
@@ -41,8 +42,8 @@ fn try_main() -> Result<(), anyhow::Error> {
     TermLogger::init(
         LevelFilter::Debug,
         ConfigBuilder::new()
-            .set_target_level(LevelFilter::Error)
-            .set_location_level(LevelFilter::Error)
+            .set_target_level(LevelFilter::Debug)
+            .set_location_level(LevelFilter::Debug)
             .build(),
         TerminalMode::Mixed,
         ColorChoice::Auto,
@@ -53,6 +54,7 @@ fn try_main() -> Result<(), anyhow::Error> {
     let program: &mut KProbe = bpf.program_mut("hello").unwrap().try_into()?;
     program.load()?;
     program.attach("do_sys_openat2", 0)?;
+    // program.attach("sys_enter_execve", 0)?;
 
     let running = Arc::new(AtomicBool::new(true));
     let r = running.clone();
