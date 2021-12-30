@@ -53,8 +53,8 @@ fn try_main() -> Result<(), anyhow::Error> {
 
     let program: &mut KProbe = bpf.program_mut("hello").unwrap().try_into()?;
     program.load()?;
-    // program.attach("do_sys_openat2", 0)?;
-    program.attach("sys_enter_execve", 0)?;
+    program.attach("do_sys_openat2", 0)?;
+    // program.attach("sys_enter_execve", 0)?;
 
     let running = Arc::new(AtomicBool::new(true));
     let r = running.clone();
